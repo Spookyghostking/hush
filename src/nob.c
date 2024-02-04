@@ -11,7 +11,7 @@ int main(void) {
     nob_cmd_append(&cmd, "-Wall", "-Wextra", "-ggdb", "-pedantic");
 
     nob_cmd_show(cmd);
-    nob_cmd_run_sync(cmd, NULL, NULL);
+    if (!nob_cmd_run_sync(cmd, NULL, NULL)) return 1;
 
     return 0;
 }
