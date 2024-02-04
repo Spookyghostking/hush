@@ -32,6 +32,7 @@ hush_dynamic_string_array hush_get_keys(struct hush_map_llb hashmap);
 struct hush_item_llb hush_pop_item(struct hush_map_llb* hashmap, const char* key);
 void hush_set_capacity(struct hush_map_llb* hashmap, size_t capacity);
 void hush_show(struct hush_map_llb hashmap);
+
 void hush_dsa_append(hush_dynamic_string_array* dsa, const char* string);
 void hush_dsa_show(hush_dynamic_string_array dsa);
 
@@ -65,6 +66,14 @@ void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value) {
         *hashmap->items[index] = new_item;
     } else {
         struct hush_item_llb* collision_item = hashmap->items[index];
+        while (collision_item != NULL) {
+            if (collision_item->key == key) {
+                collision_item->value = value;
+                return;
+            }
+            collision_item = collision_item->next;
+        }
+        collision_item = hashmap->items[index];
         while (collision_item->next != NULL) {
             collision_item = collision_item->next;
         }
