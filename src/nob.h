@@ -85,6 +85,8 @@ bool nob_is_equal_Cstr(const char* s1, const char* s2);
 bool nob_rename(const char* old_path, const char* new_path);
 bool nob_remove(const char* file_path);
 
+bool nob_read_entire_file(const char* path, nob_String_Builder* sb);
+
 bool nob_check_file_modified(const char* filePath, time_t* modTime);
 double nob_modified_time_difference(const char* filePath1, const char* filePath2);
 bool nob_is_need_rebuild(const char* source_file_path, const char* executable_file_path);
@@ -109,6 +111,7 @@ bool NOB_GO_REBUILD_YOURSELF(void);
 //      EMEN    ONIM    PLEM    ENTA    IMPL		        PLEMENTATIONIMPL
 
 
+#define NOB_IMPLEMENTATION
 #ifdef NOB_IMPLEMENTATION
 
 void nob_log(Nob_log_level level, const char* fmt, ...) {
@@ -356,6 +359,49 @@ bool nob_remove(const char* file_path) {
 	}
 	return true;
 #endif
+}
+
+bool nob_read_entire_file(const char* path, nob_String_Builder* sb) {
+    bool result = true;
+
+    FILE* f = fopen(path, "rb");
+    if (f == NULL) {
+        result = false;
+        goto defer;
+    }
+    if (fseek(f, 0, SEEK_END) < 0) {
+        result = false;
+        goto defer;
+    }
+    long int m = ftell(f);
+    if (m < 0) {
+        result = false;
+        goto defer;
+    }
+    if (fseek(f, 0, SEEK_SET) < 0) {
+        result = false;
+        goto defer;
+    }
+
+    size_t new_count = sb->count + m;
+    if (new_count > sb->capacity) {
+        sb->items = realloc(sb->items, new_count);
+        assert(sb->items != NULL && "RAM is full");
+        sb->capacity = new_count;
+    }
+
+    fread(sb->items + sb->count, 1, m, f);
+    if (ferror(f)) {
+        result = false;
+        goto defer;
+    }
+
+defer:
+    if (!result)
+        nob_log(NOB_ERROR, "Could not read file %s: %s", path, strerror(errno));
+    if (f)
+        fclose(f);
+    return result;
 }
 
 bool NOB_GO_REBUILD_YOURSELF(void) {
