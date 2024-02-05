@@ -395,6 +395,7 @@ bool nob_read_entire_file(const char* path, nob_String_Builder* sb) {
         result = false;
         goto defer;
     }
+    sb->count = new_count;
 
 defer:
     if (!result)

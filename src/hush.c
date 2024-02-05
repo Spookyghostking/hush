@@ -1,5 +1,7 @@
 #define HUSH_IMPLEMENTATION
 #include"hush.h"
+#define NOB_IMPLEMENTATION
+#include"nob.h"
 
 
 int main(void) {
@@ -22,6 +24,12 @@ int main(void) {
     hush_dsa_show(hush_get_keys(hashmap));
 
     hush_show(hashmap);
+
+    nob_String_Builder sb = {0};
+    if (!nob_read_entire_file("Shakespeare.txt", &sb))
+        return 1;
+    const char* contents = nob_string_builder_to_cstr(sb);
+    printf("%s\n", contents);
 
 
     return 0;
