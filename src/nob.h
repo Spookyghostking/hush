@@ -74,6 +74,7 @@ const char* nob_cmd_join(const char* joiner, nob_Cmd cmd);
 void nob_cmd_show(nob_Cmd cmd);
 void nob_nob_cmd_append_null(nob_Cmd* cmd, ...);
 #define nob_cmd_append(cmd, ...) nob_nob_cmd_append_null(cmd, __VA_ARGS__, NULL)
+bool nob_cmd_clear(nob_Cmd* cmd);
 Pid nob_cmd_run_async(nob_Cmd cmd, Fd* fdin, Fd* fdout);
 
 #define NOB_SYNC_PROCESS_TIMEOUT_MILISECONDS 5000
@@ -111,7 +112,7 @@ bool NOB_GO_REBUILD_YOURSELF(void);
 //      EMEN    ONIM    PLEM    ENTA    IMPL		        PLEMENTATIONIMPL
 
 
-#define NOB_IMPLEMENTATION
+//#define NOB_IMPLEMENTATION
 #ifdef NOB_IMPLEMENTATION
 
 void nob_log(Nob_log_level level, const char* fmt, ...) {
@@ -188,6 +189,16 @@ void nob_nob_cmd_append_null(nob_Cmd* cmd, ...) {
 	}
 
 	va_end(args);
+}
+
+bool nob_cmd_clear(nob_Cmd* cmd) {
+    if (cmd->count > cmd->capacity)
+        return false;
+    for (size_t i = 0; i < cmd->count; i++) {
+        cmd->items[i] = NULL;
+    }
+    cmd->count = 0;
+    return true;
 }
 
 
