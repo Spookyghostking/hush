@@ -83,7 +83,7 @@ void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value) {
     } else {
         struct hush_item_llb* collision_item = hashmap->items[index];
         while (collision_item != NULL) {
-            if (collision_item->key == key) {
+            if (nob_is_equal_Cstr(collision_item->key, key)) {
                 collision_item->value = value;
                 return;
             }
@@ -113,12 +113,12 @@ int hush_get_value(struct hush_map_llb hashmap, const char* key) {
     size_t index = hush_get_index(hashmap, key);
     struct hush_item_llb* item = hashmap.items[index];
     while (item != NULL) {
-        if (item->key == key) {
+        if (nob_is_equal_Cstr(item->key, key)) {
             return item->value;
         }
         item = item ->next;
     }
-    fprintf(stderr, "[ERROR] Out of bounds, key does not exist in hashtable.\n");
+    fprintf(stderr, "[ERROR] Out of bounds, key \"%s\" does not exist in hashtable.\n", key);
     exit(1);
 }
 
@@ -153,14 +153,14 @@ hush_dynamic_string_array hush_get_keys(struct hush_map_llb hashmap) {
 struct hush_item_llb hush_pop_item(struct hush_map_llb* hashmap, const char* key) {
     size_t index = hush_get_index(*hashmap, key);
     struct hush_item_llb* item = hashmap->items[index];
-    if (item->key == key) {
+    if (nob_is_equal_Cstr(item->key, key)) {
         hashmap->items[index] = item->next;
         item->next = NULL;
     } else {
         struct hush_item_llb* prev_item = item;
         while (item != NULL) {
             item = prev_item->next;
-            if (item->key == key) {
+            if (nob_is_equal_Cstr(item->key, key)) {
                 break;
             }
             prev_item = item;
