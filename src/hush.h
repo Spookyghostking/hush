@@ -6,6 +6,9 @@
 #include<stdlib.h>
 #include<string.h>
 
+#define NOB_IMPLEMENTATION
+#include"nob.h"
+
 
 struct hush_item_llb{
     const char* key;
@@ -99,7 +102,7 @@ bool hush_has_key(struct hush_map_llb hashmap, const char* key) {
     size_t index = hush_get_index(hashmap, key);
     struct hush_item_llb* item = hashmap.items[index];
     while (item != NULL) {
-        if (item->key == key)
+        if (nob_is_equal_Cstr(item->key, key))
             return true;
         item = item->next;
     }
