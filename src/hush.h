@@ -1,6 +1,7 @@
 #ifndef HUSH_H_
 #define HUSH_H_
 #include<assert.h>
+#include<stdbool.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -27,7 +28,7 @@ typedef struct {
 
 
 long long int hush_fnv1a(const char* data);
-size_t hush_get_index(const char* key);
+size_t hush_get_index(struct hush_map_llb hashmap, const char* key);
 void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value);
 bool hush_has_key(struct hush_map_llb hashmap, const char* key);
 int hush_get_value(struct hush_map_llb hashmap, const char* key);
@@ -60,7 +61,7 @@ long long int hush_fnv1a(const char* data) {
 }
 
 size_t hush_get_index(struct hush_map_llb hashmap, const char* key) {
-    return (size_t)(hush_fnv1a(key)) % hashmap->capacity;
+    return (size_t)(hush_fnv1a(key)) % hashmap.capacity;
 }
 
 // struct hush_map_llb hush_set_capacity(struct hush_map_llb hashmap, size_t capacity) {
