@@ -1,3 +1,5 @@
+#ifndef HUSH_H_
+#define HUSH_H_
 #include<assert.h>
 #include<stdio.h>
 #include<stdlib.h>
@@ -25,7 +27,9 @@ typedef struct {
 
 
 long long int hush_fnv1a(const char* data);
+size_t hush_get_index(const char* key);
 void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value);
+bool hush_has_key(struct hush_map_llb hashmap, const char* key);
 int hush_get_value(struct hush_map_llb hashmap, const char* key);
 const char* hush_get_key(struct hush_map_llb hashmap, int value);
 hush_dynamic_string_array hush_get_keys(struct hush_map_llb hashmap);
@@ -36,8 +40,12 @@ void hush_show(struct hush_map_llb hashmap);
 void hush_dsa_append(hush_dynamic_string_array* dsa, const char* string);
 void hush_dsa_show(hush_dynamic_string_array dsa);
 
+
+
 //#define HUSH_IMPLEMENTATION
 #ifdef HUSH_IMPLEMENTATION
+
+
 
 long long int hush_fnv1a(const char* data) {
     long long int hash = 0xcbf29ce484222325;
@@ -51,12 +59,16 @@ long long int hush_fnv1a(const char* data) {
     return hash;
 }
 
+size_t hush_get_index(struct hush_map_llb hashmap, const char* key) {
+    return (size_t)(hush_fnv1a(key)) % hashmap->capacity;
+}
+
 // struct hush_map_llb hush_set_capacity(struct hush_map_llb hashmap, size_t capacity) {
 //     return hashmap;
 // }
 
 void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value) {
-    size_t index = (size_t)(hush_fnv1a(key) % hashmap->capacity);
+    size_t index = hush_get_index(*hashmap, key);
     struct hush_item_llb new_item = {0};
     new_item.key = key;
     new_item.value = value;
@@ -82,8 +94,19 @@ void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value) {
     }
 }
 
+bool hush_has_key(struct hush_map_llb hashmap, const char* key) {
+    size_t index = hush_get_index(hashmap, key);
+    struct hush_item_llb* item = hashmap.items[index];
+    while (item != NULL) {
+        if (item->key == key)
+            return true;
+        item = item->next;
+    }
+    return false;
+}
+
 int hush_get_value(struct hush_map_llb hashmap, const char* key) {
-    size_t index = (size_t)(hush_fnv1a(key) % hashmap.capacity);
+    size_t index = hush_get_index(hashmap, key);
     struct hush_item_llb* item = hashmap.items[index];
     while (item != NULL) {
         if (item->key == key) {
@@ -124,7 +147,7 @@ hush_dynamic_string_array hush_get_keys(struct hush_map_llb hashmap) {
 }
 
 struct hush_item_llb hush_pop_item(struct hush_map_llb* hashmap, const char* key) {
-    size_t index = (size_t)(hush_fnv1a(key) % hashmap->capacity);
+    size_t index = hush_get_index(*hashmap, key);
     struct hush_item_llb* item = hashmap->items[index];
     if (item->key == key) {
         hashmap->items[index] = item->next;
@@ -216,4 +239,5 @@ void hush_dsa_show(hush_dynamic_string_array dsa) {
 }
 
 
+#endif
 #endif
