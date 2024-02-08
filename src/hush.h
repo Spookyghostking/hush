@@ -11,7 +11,7 @@
 
 
 struct hush_item_llb{
-    const char* key;
+    char* key;
     struct hush_item_llb* next;
     int value;
 };
@@ -74,7 +74,13 @@ size_t hush_get_index(struct hush_map_llb hashmap, const char* key) {
 void hush_set_value(struct hush_map_llb* hashmap, const char* key, int value) {
     size_t index = hush_get_index(*hashmap, key);
     struct hush_item_llb new_item = {0};
-    new_item.key = key;
+    
+    new_item.key = malloc(strlen(key) + 1);
+    for (size_t i = 0; i < strlen(key); i++) {
+        new_item.key[i] = key[i];
+    }
+    new_item.key[strlen(key)] = '\0';
+
     new_item.value = value;
     new_item.next = NULL;
     if (hashmap->items[index] == NULL) {
@@ -194,13 +200,14 @@ void hush_set_capacity(struct hush_map_llb* hashmap, size_t capacity) {
             hush_set_value(hashmap, item->key, item->value);
             items[i] = item->next;
             item->next = NULL;
+            free(item->key);
             free(item);
         }
     }
 
-    for (size_t i = 0; i < item_count; i++) {
-        free(items[i]);
-    }
+    //for (size_t i = 0; i < item_count; i++) {
+    //    free(items[i]);
+    //}
     free(items);
 }
 
