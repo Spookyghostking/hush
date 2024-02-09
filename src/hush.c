@@ -13,13 +13,18 @@ int main(void) {
     struct hush_map_llb hashmap = {0};
     hush_set_capacity(&hashmap, 10000);
 
-    nob_String_Builder sb = {0};
-    if (!nob_read_entire_file("Shakespeare.txt", &sb))
+    nob_String_Builder file_contents = {0};
+    const char* file_path = "Shakespeare.txt";
+    if (!nob_read_entire_file(file_path, &file_contents)) {
+        nob_log(NOB_ERROR, "Could not read file: %s\n", file_path);
         return 1;
+    }
+
+    nob_log(NOB_INFO, "The file %s is %lli bytes long.", file_path, file_contents.count);
     
-    char* offset = sb.items;
+    char* offset = file_contents.items;
     size_t cursor = 0;
-    while(offset + cursor < sb.items + sb.count) {
+    while(offset + cursor < file_contents.items + file_contents.count) {
         if (is_alphabetic(*offset)) {
             char* current_char = offset + cursor;
             bool cc_is_alpha = is_alphabetic(*current_char);
@@ -78,7 +83,7 @@ int main(void) {
         fprintf(outf, "\"%s\": %d\n", key, wordcount);
         sum += wordcount;
     }
-    printf("Number of valid words found is: %d\n", sum);
+    nob_log(NOB_INFO, "Number of valid words found is: %d\n", sum);
 
     fclose(outf);
 
