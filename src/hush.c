@@ -19,7 +19,6 @@ int main(void) {
     
     char* offset = sb.items;
     size_t cursor = 0;
-    //int loop_count_debug_thing = 0;
     while(offset + cursor < sb.items + sb.count) {
         if (is_alphabetic(*offset)) {
             char* current_char = offset + cursor;
@@ -37,29 +36,10 @@ int main(void) {
                     else
                         word[i] = offset[i];
                 }
-                word[cursor] = '\0';                                            // this may or may not cause a segfault - will have to check
+                word[cursor] = '\0';
                 const char* string = (const char*) word;
                 
-                //Some debug stuff
-                //size_t index = hush_get_index(hashmap, string);
-                //struct hush_item_llb* item = hashmap.items[index];
-                //while (item != NULL) {
-                //    fprintf(outf, "Comparing \"%s\", \"%s\": ", item->key, string);
-                //    if (nob_is_equal_Cstr(item->key, string)) {
-                //        fprintf(outf, "equal\n");
-                //        break;
-                //    } else {
-                //        fprintf(outf, "not equal\n");
-                //    }
-                //    item = item->next;
-                //}
-                
                 if (!hush_has_key(hashmap, string)) {
-                    //fprintf(outf, "Adding new word: %s\n\n", string);
-                    //loop_count_debug_thing += 1;
-                    //if (loop_count_debug_thing >= 100) {
-                    //    exit(-30);
-                    //}
                     hush_set_value(&hashmap, string, 1);
                 } else {
                     int wordcount = hush_get_value(hashmap, string);
