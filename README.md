@@ -17,7 +17,9 @@ When ran it will read the Shakespeare.txt file and count the numer of times each
 The implemantation currently (and probably in the future too) is only made to work on windows.
 
 To run the code, simply use a C compiler of your choosing to compile the hush.c file. For example:
+
     gcc -o hush hush.c
+
 Then run the resulting binary.
 
 
