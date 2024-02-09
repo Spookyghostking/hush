@@ -43,8 +43,8 @@ const char* nob_string_builder_to_cstr(nob_String_Builder sb);
 
 #define NOB_DA_INITIAL_CAP 256
 
-#define nob_dynamic_array_append(da, item)														\
-	{																						\
+#define nob_dynamic_array_append(da, item)													\
+	do {																					\
 		if ((da)->count >= (da)->capacity) {												\
 			(da)->capacity = (da)->capacity == 0 ? NOB_DA_INITIAL_CAP : (da)->capacity * 2;	\
 			(da)->items = realloc((da)->items, (da)->capacity * sizeof(*(da)->items));		\
@@ -52,7 +52,7 @@ const char* nob_string_builder_to_cstr(nob_String_Builder sb);
 		}																					\
 		(da)->items[(da)->count] = (item);													\
 		(da)->count += 1;																	\
-	};
+	} while (0)
 
 
 #define nob_string_builder_append_char(sb, ch) nob_dynamic_array_append(sb, ch)
